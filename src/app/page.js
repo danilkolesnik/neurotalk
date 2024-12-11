@@ -1,14 +1,32 @@
 'use client';
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import axios from "axios";
 
 export default function Home() {
-
   const router = useRouter();
 
   useEffect(() => {
-    router.push('/messages');
-  },[]);
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    console.log('Code:', code);
+  
+    if (code) {
+      const exchangeCodeForToken = async () => {
+        try {
+          // const res = await fetch(`/api/exchangeCode?code=${code}`);
+          const response = await axios.get(`/api/exchangeCode?code=${code}`);
+          const accessToken = response.data.access_token;
+          console.log('Access Token:', accessToken);
+
+        } catch (error) {
+          console.error('Error exchanging code for token:', error);
+        }
+      };
+
+      exchangeCodeForToken();
+    }
+  }, []);
+
   return <>Loading...</>;
 }

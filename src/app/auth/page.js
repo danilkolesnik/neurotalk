@@ -4,12 +4,12 @@ const Auth = () => {
 
     const handleInstagramLogin = () => {
         const clientId = '9052833171443795';
-        // const redirectUri = 'https://pq6wqffh-3000.euw.devtunnels.ms/auth';
-        const redirectUri = 'http://localhost:3000/';
+        const redirectUri = 'https://pq6wqffh-3000.euw.devtunnels.ms';
+        // const redirectUri = 'http://localhost:3000/';
         // const instagramAuthUrl = `https://api.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user_profile,user_media&response_type=code`;
 
-        const instagramAuthUrl = `https://www.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=instagram_business_basic&response_type=code`;
-        
+        // const instagramAuthUrl = `https://www.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=instagram_business_basic&response_type=code`;
+        const instagramAuthUrl = `https://www.instagram.com/oauth/authorize?enable_fb_login=0&force_authentication=1&client_id=${clientId}&redirect_uri=${redirectUri}/&response_type=code&scope=instagram_business_basic%2Cinstagram_business_manage_messages%2Cinstagram_business_manage_comments%2Cinstagram_business_content_publish`
         window.location.href = instagramAuthUrl;
     };
 

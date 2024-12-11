@@ -1,10 +1,11 @@
 'use client';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const PrivateRoute = ({ children }) => {
     const router = useRouter();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    
     
     const checkAuth = () => {
         if (!isAuthenticated) {
