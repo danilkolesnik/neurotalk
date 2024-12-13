@@ -11,10 +11,12 @@ export async function GET(request) {
     });
   }
 
-  const clientId = '9052833171443795';
-  const clientSecret = 'e8a88313f4abcb7c41ce9aa020e280af';
+  // const clientId = '9052833171443795';
+  const clientId = '1247032136528863';
+  // const clientSecret = 'e8a88313f4abcb7c41ce9aa020e280af';
+  const clientSecret = '13e18cc1f2ea4a817bbff27ecc381085';
   
-  const redirectUri = 'https://pq6wqffh-3000.euw.devtunnels.ms';
+  const redirectUri = 'https://pq6wqffh-3000.euw.devtunnels.ms/';
 
   try {
         const response = await axios.post('https://api.instagram.com/oauth/access_token', 
@@ -41,6 +43,7 @@ export async function GET(request) {
     return new Response(JSON.stringify({ error: error.response ? error.response.data : error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
+      
     });
   }
 } 

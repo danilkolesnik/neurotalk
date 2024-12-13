@@ -3,7 +3,7 @@
 const Auth = () => {
 
     const handleInstagramLogin = () => {
-        const clientId = '9052833171443795';
+        const clientId = '1247032136528863';
         const redirectUri = 'https://pq6wqffh-3000.euw.devtunnels.ms';
         // const redirectUri = 'http://localhost:3000/';
         // const instagramAuthUrl = `https://api.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user_profile,user_media&response_type=code`;

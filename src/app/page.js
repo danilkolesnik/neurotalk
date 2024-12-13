@@ -14,7 +14,6 @@ export default function Home() {
     if (code) {
       const exchangeCodeForToken = async () => {
         try {
-          // const res = await fetch(`/api/exchangeCode?code=${code}`);
           const response = await axios.get(`/api/exchangeCode?code=${code}`);
           const accessToken = response.data.access_token;
           console.log('Access Token:', accessToken);
