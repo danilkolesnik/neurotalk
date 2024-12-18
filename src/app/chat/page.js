@@ -1,62 +1,54 @@
+'use client'
+import { useEffect, useState } from 'react';
 
 const Chat = () => {
+    const [messages, setMessages] = useState([]);
+
+    useEffect(() => {
+        const fetchMessages = async () => {
+            const accessToken = localStorage.getItem('access_token');
+            if (!accessToken) {
+                console.error('Access token is missing');
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://graph.instagram.com/me/messages?access_token=${accessToken}`);
+                const data = await response.json();
+                if (data.error) {
+                    console.error('Error fetching messages:', data.error);
+                } else {
+                    setMessages(data.data);
+                }
+            } catch (error) {
+                console.error('Error fetching messages:', error);
+            }
+        };
+
+        fetchMessages();
+    }, []);
+
     return (
         <div className="flex-1 h-screen flex">
             <div className="w-1/3 border-r border-gray-700 overflow-y-auto bg-gray-800">
                 <div className="p-4">
-                <h2 className="text-xl font-semibold mb-4 text-gray-100">Чаты</h2>
-                <ul>
-                    <li className="mb-2">
-                    <button className="w-full text-left p-3 rounded-lg hover:bg-gray-700 transition-colors">
-                        <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-indigo-900 flex items-center justify-center mr-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-circle text-indigo-400">
-                            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
-                            </svg>
-                        </div>
-                        <div className="flex-1">
-                            <div className="font-semibold text-gray-100">Анна</div>
-                            <div className="text-sm text-gray-400 truncate">Привет! Как дела?</div>
-                        </div>
-                        <div className="bg-indigo-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">2</div>
-                        </div>
-                    </button>
-                    </li>
-                    <li className="mb-2">
-                    <button className="w-full text-left p-3 rounded-lg hover:bg-gray-700 transition-colors">
-                        <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-indigo-900 flex items-center justify-center mr-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-circle text-indigo-400">
-                            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
-                            </svg>
-                        </div>
-                        <div className="flex-1">
-                            <div className="font-semibold text-gray-100">Иван</div>
-                            <div className="text-sm text-gray-400 truncate">Спасибо за информацию</div>
-                        </div>
-                        </div>
-                    </button>
-                    </li>
-                    <li className="mb-2">
-                    <button className="w-full text-left p-3 rounded-lg hover:bg-gray-700 transition-colors">
-                        <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-indigo-900 flex items-center justify-center mr-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-circle text-indigo-400">
-                            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
-                            </svg>
-                        </div>
-                        <div className="flex-1">
-                            <div className="font-semibold text-gray-100">Мария</div>
-                            <div className="text-sm text-gray-400 truncate">Когда встречаемся?</div>
-                        </div>
-                        <div className="bg-indigo-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">1</div>
-                        </div>
-                    </button>
-                    </li>
-                </ul>
+                    <h2 className="text-xl font-semibold mb-4 text-gray-100">Чаты</h2>
+                    <ul>
+                        {messages.map((message, index) => (
+                            <li key={index} className="mb-2">
+                                <button className="w-full text-left p-3 rounded-lg hover:bg-gray-700 transition-colors">
+                                    <div className="flex items-center">
+                                        <div className="flex-1">
+                                            <div className="font-semibold text-gray-100">{message.from}</div>
+                                            <div className="text-sm text-gray-400 truncate">{message.text}</div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             </div>
-                
             <div className="flex-1 flex flex-col bg-gray-900">
                 <div className="flex-1 p-4 overflow-y-auto">
                 

@@ -17,7 +17,8 @@ export default function Home() {
           const response = await axios.get(`/api/exchangeCode?code=${code}`);
           const accessToken = response.data.access_token;
           console.log('Access Token:', accessToken);
-
+          localStorage.setItem('access_token', accessToken);
+          router.push('/messages');
         } catch (error) {
           console.error('Error exchanging code for token:', error);
         }

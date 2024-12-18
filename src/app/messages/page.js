@@ -1,76 +1,111 @@
-import React from 'react';
+'use client';
+import React, { useEffect, useState } from 'react';
 
-const Dashboard = () => {
+const Messages = () => {
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+          throw new Error('Access token not found');
+        }
+
+        // First, let's get the Instagram Business Account ID
+        const accountResponse = await fetch(`https://graph.instagram.com/v18.0/me?fields=id,username&access_token=${accessToken}`);
+        const accountData = await accountResponse.json();
+        console.log('Account data:', accountData);
+
+        if (accountData.error) {
+          throw new Error(`Account error: ${accountData.error.message}`);
+        }
+
+        // Now fetch messages with the latest API version
+        const response = await fetch(`https://graph.instagram.com/v18.0/${accountData.id}/conversations?fields=participants,messages{message,from,created_time}&access_token=${accessToken}`);
+        const data = await response.json();
+        console.log('Messages response:', data);
+
+        if (data.error) {
+          throw new Error(data.error.message);
+        }
+
+        setMessages(data.data || []);
+      } catch (err) {
+        console.error('Error fetching messages:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-200 flex items-center justify-center">
+        <div className="text-black">Loading messages...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-200 flex items-center justify-center">
+        <div className="text-red-500">Error: {error}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-screen bg-gray-200">
       {/* Messages Section */}
       <div className="p-4">
-        <h2 className="text-xl text-black font-semibold mb-4">Сообщения</h2>
+        <h2 className="text-xl text-black font-semibold mb-4">Instagram Сообщения</h2>
         <div className="space-y-4">
-          {/* Message 1 */}
-          <div className="bg-white p-4 rounded-lg shadow text-black">
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-semibold">user1</span>
-              <span className="text-sm">10:00</span>
+          {messages.map((message, index) => (
+            <div key={index} className="bg-white p-4 rounded-lg shadow text-black">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-semibold">{message.from?.name || 'User'}</span>
+                <span className="text-sm">
+                  {new Date(message.created_time).toLocaleTimeString()}
+                </span>
+              </div>
+              <p className="mb-2">{message.message}</p>
+              <div className="flex space-x-2">
+                <input
+                  className="flex h-10 w-full rounded-md border border-input bg-gray-200 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  placeholder="Написать ответ..."
+                />
+                <button className="inline-flex bg-black text-white items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-send w-4 h-4 mr-2"
+                  >
+                    <path d="m22 2-7 20-4-9-9-4Z"></path>
+                    <path d="M22 2 11 13"></path>
+                  </svg>
+                  Ответить
+                </button>
+              </div>
             </div>
-            <p className="mb-2">Привет! Как дела?</p>
-            <div className="flex space-x-2">
-              <input
-                className="flex h-10 w-full rounded-md border border-input bg-gray-200 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                placeholder="Написать ответ..."
-              />
-              <button className="inline-flex bg-black text-white items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-send w-4 h-4 mr-2"
-                >
-                  <path d="m22 2-7 20-4-9-9-4Z"></path>
-                  <path d="M22 2 11 13"></path>
-                </svg>
-                Ответить
-              </button>
+          ))}
+          {messages.length === 0 && (
+            <div className="bg-white p-4 rounded-lg shadow text-black text-center">
+              Нет сообщений
             </div>
-          </div>
-          {/* Message 2 */}
-          <div className="bg-white p-4 rounded-lg shadow text-black">
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-semibold">user2</span>
-              <span className="text-sm text-gray-500">11:30</span>
-            </div>
-            <p className="mb-2">Здравствуйте! У меня вопрос по вашему продукту.</p>
-            <div className="flex space-x-2">
-              <input
-                className="flex h-10 w-full bg-gray-200 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                placeholder="Написать ответ..."
-              />
-              <button className="inline-flex bg-black text-white items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-send w-4 h-4 mr-2"
-                >
-                  <path d="m22 2-7 20-4-9-9-4Z"></path>
-                  <path d="M22 2 11 13"></path>
-                </svg>
-                Ответить
-              </button>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -107,4 +142,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Messages;
