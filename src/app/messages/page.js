@@ -14,7 +14,7 @@ const Messages = () => {
           throw new Error('Access token not found');
         }
 
-        // First, let's get the Instagram Business Account ID
+        // todo: threads instagram
         const accountResponse = await fetch(`https://graph.instagram.com/v18.0/me?fields=id,username&access_token=${accessToken}`);
         const accountData = await accountResponse.json();
         console.log('Account data:', accountData);
@@ -23,7 +23,6 @@ const Messages = () => {
           throw new Error(`Account error: ${accountData.error.message}`);
         }
 
-        // Now fetch messages with the latest API version
         const response = await fetch(`https://graph.instagram.com/v18.0/${accountData.id}/conversations?fields=participants,messages{message,from,created_time}&access_token=${accessToken}`);
         const data = await response.json();
         console.log('Messages response:', data);
